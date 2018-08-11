@@ -5,8 +5,8 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <style>
     body {
-      background-color: lightgrey;
       font-family: 'Open Sans', sans-serif;
+      background-color: white;
     }
 
     .game-title {
@@ -24,6 +24,10 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      box-shadow: 3px 6px 6px lightgray;
+      border: 1px lightgray;
+      border-radius: 4px;
+      border-style: solid;
     }
 
     .button {
@@ -39,25 +43,76 @@
       cursor: pointer;
     }
 
-    #start-screen {
+    #main-screen {
       text-align: center;
       margin-top: 25%;
+    }
+
+    #timer {
+      font-size: 12px;
+      color: #888888;
+      text-align: center;
     }
   </style>
 </head>
 
-<body>
+<body onload="onLoad()">
 
   <div class="main-box" id="main-box">
-    <div id="start-screen">
+    <div id="main-screen">
       <h2 class="game-title">WORD GAME</h2>
-      <a class="button" href="#game-screen">Start</a>
+      <button class="button" onclick="startClick()">Start</a>
     </div>
 
-    <div id="game-screen"></div>
+    <div id="game-screen">
+      <div id="game-screen-content">
+
+        <div id="timer">00:00</div>
+
+      </div>
+    </div>
   </div>
 
   <script>
+
+    function onLoad() {
+      let gameScreen = document.getElementById("game-screen");
+      gameScreen.style.display = "none";
+    }
+
+    function startClick() {
+      let mainBox = document.getElementById("main-box");
+      let gameScreen = document.getElementById("game-screen");
+      mainBox.innerHTML = gameScreen.innerHTML;
+
+      startTimer();
+    }
+
+    function startTimer() {
+      let totalSec = 0;
+      let timer = document.getElementById("timer");
+
+      setInterval(function () {
+        totalSec++;
+
+        let second = totalSec % 60;
+        let minute = parseInt(totalSec / 60);
+
+        timerDisplay = minute.toString().padLeft("0", 2) + ":" + second.toString().padLeft("0", 2);
+
+        timer.innerHTML = timerDisplay;
+      }, 1000);
+
+    }
+
+    String.prototype.padLeft = function (char, length) {
+      let result = this;
+      while (result.length < length) {
+        result = char + result;
+      }
+
+      return result;
+    }
   </script>
 </body>
 
