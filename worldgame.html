@@ -43,9 +43,36 @@
       cursor: pointer;
     }
 
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #d5d5d5;
+      position: fixed;
+      left: 0;
+      bottom: 10px;
+      width: 100%;
+    }
+
+    .card {
+      display: inline-block;
+      font-size: 21px;
+      color: #000000;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      background-color: lightgreen;
+    }
+
     #main-screen {
       text-align: center;
       margin-top: 25%;
+    }
+
+    #main-screen.hidden {
+      transition: 1s;
+      top: -1000px;
+      position: absolute;
     }
 
     #timer {
@@ -53,67 +80,125 @@
       color: #888888;
       text-align: center;
     }
+
+    #game-screen {
+      bottom: -1000px;
+      position: relative;
+    }
+
+    #game-screen.show {
+      transition: 1s;
+      bottom: 0;
+    }
+
+    #drag-area {
+      margin-top: 20%;
+      height: 50%;
+      margin-left: 30px;
+      margin-right: 30px;
+    }
   </style>
 </head>
 
-<body onload="onLoad()">
+<body>
 
   <div class="main-box" id="main-box">
+
     <div id="main-screen">
       <h2 class="game-title">WORD GAME</h2>
-      <button class="button" onclick="startClick()">Start</a>
+      <button class="button" onclick="initGame()">Start</a>
     </div>
 
     <div id="game-screen">
-      <div id="game-screen-content">
-
-        <div id="timer">00:00</div>
-
+      <div id="timer">00:00</div>
+      <div id="game-content">
+        <div id="drag-area"></div>
+        <div id="drop-area"></div>
       </div>
+      <div id="game-footer" class="footer"></div>
     </div>
-  </div>
 
-  <script>
+    <script>
 
-    function onLoad() {
-      let gameScreen = document.getElementById("game-screen");
-      gameScreen.style.display = "none";
-    }
+      let dataArray = [
+        "It's all about the flow"
+      ];
 
-    function startClick() {
-      let mainBox = document.getElementById("main-box");
-      let gameScreen = document.getElementById("game-screen");
-      mainBox.innerHTML = gameScreen.innerHTML;
-
-      startTimer();
-    }
-
-    function startTimer() {
-      let totalSec = 0;
-      let timer = document.getElementById("timer");
-
-      setInterval(function () {
-        totalSec++;
-
-        let second = totalSec % 60;
-        let minute = parseInt(totalSec / 60);
-
-        timerDisplay = minute.toString().padLeft("0", 2) + ":" + second.toString().padLeft("0", 2);
-
-        timer.innerHTML = timerDisplay;
-      }, 1000);
-
-    }
-
-    String.prototype.padLeft = function (char, length) {
-      let result = this;
-      while (result.length < length) {
-        result = char + result;
+      function initGame() {
+        renderGameScreen();
+        startTimer();
       }
 
-      return result;
-    }
-  </script>
+      function renderGameScreen() {
+        let mainScreen = document.getElementById("main-screen");
+        let gameScreen = document.getElementById("game-screen");
+        let dragArea = document.getElementById("drag-area");
+        let gameFooter = document.getElementById("game-footer");
+
+        let data = getData();
+        let footerText = `Form the phrase "${data}" on the line above`;
+
+        let contentArray = data.split(" ");
+        let cards = generateCard(contentArray);
+        cards.forEach(card => {
+          dragArea.appendChild(card);
+        });
+
+        gameFooter.innerHTML = footerText;
+
+        mainScreen.setAttribute("class", "hidden");
+        gameScreen.setAttribute("class", "show");
+      }
+
+      function generateCard(contentArray) {
+        let divs = [];
+
+        contentArray.forEach(content => {
+          let div = document.createElement("div");
+
+          div.setAttribute("class", "card");
+          div.setAttribute("draggable", "true");
+          div.innerHTML = content;
+
+          divs.push(div);
+        });
+
+        return divs;
+      }
+
+      function startTimer() {
+        let totalSec = 0;
+        let timer = document.getElementById("timer");
+
+        setInterval(() => {
+          totalSec++;
+
+          let second = totalSec % 60;
+          let minute = parseInt(totalSec / 60);
+
+          timerDisplay = minute.toString().padLeft("0", 2) + ":" + second.toString().padLeft("0", 2);
+
+          timer.innerHTML = timerDisplay;
+        }, 1000);
+
+      }
+
+      function getData() {
+        let randomIndex = Math.floor(Math.random() * dataArray.length);
+        return dataArray[randomIndex];
+      }
+
+
+
+      String.prototype.padLeft = function (char, length) {
+        let result = this;
+        while (result.length < length) {
+          result = char + result;
+        }
+
+        return result;
+      }
+    </script>
 </body>
 
 </html>
