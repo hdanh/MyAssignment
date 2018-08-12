@@ -65,7 +65,7 @@
     }
 
     .card:hover {
-      background-color: lightgreen;
+      background-color: lightgrey;
     }
 
     #main-screen {
@@ -101,6 +101,11 @@
       margin-left: 30px;
       margin-right: 30px;
     }
+
+    #drop-zone {
+      border-bottom: 1px solid #888888;
+      margin: 0px auto;
+    }
   </style>
 </head>
 
@@ -119,8 +124,10 @@
         <div id="drag-area"></div>
       </div>
     </div>
-    <div id="result"></div>
-    <div id="game-footer" class="footer"></div>
+    <div id="game-footer" class="footer">
+      <div id="drop-zone"></div>
+      <div id="footer-text"></div>
+    </div>
   </div>
 
   <script>
@@ -139,6 +146,7 @@
       let gameScreen = document.getElementById("game-screen");
       let dragArea = document.getElementById("drag-area");
       let gameFooter = document.getElementById("game-footer");
+      let footer = document.getElementById("footer-text");
 
       let data = getData();
       let footerText = `Form the phrase "${data}" on the line above`;
@@ -149,12 +157,25 @@
         dragArea.appendChild(card);
       });
 
-      gameFooter.innerHTML = footerText;
+      footer.innerHTML = footerText;
 
       mainScreen.setAttribute("class", "hidden");
       gameScreen.setAttribute("class", "show");
 
       randomCardPosition(cards);
+
+      renderDroppableZone(cards);
+    }
+
+    function renderDroppableZone(cards) {
+      let length = 20;
+      let dropZone = document.getElementById("drop-zone");
+
+      cards.forEach(card => {
+        length += card.clientWidth + 5;
+      });
+
+      dropZone.style.width = length;
     }
 
     function generateCard(contentArray) {
