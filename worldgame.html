@@ -58,6 +58,10 @@
       font-size: 21px;
       color: #000000;
       cursor: pointer;
+      margin: 2px;
+      padding: 10px;
+      text-align: center;
+      position: absolute;
     }
 
     .card:hover {
@@ -113,92 +117,124 @@
       <div id="timer">00:00</div>
       <div id="game-content">
         <div id="drag-area"></div>
-        <div id="drop-area"></div>
       </div>
-      <div id="game-footer" class="footer"></div>
     </div>
+    <div id="result"></div>
+    <div id="game-footer" class="footer"></div>
+  </div>
 
-    <script>
+  <script>
 
-      let dataArray = [
-        "It's all about the flow"
-      ];
+    let dataArray = [
+      "It's all about the flow"
+    ];
 
-      function initGame() {
-        renderGameScreen();
-        startTimer();
+    function initGame() {
+      renderGameScreen();
+      startTimer();
+    }
+
+    function renderGameScreen() {
+      let mainScreen = document.getElementById("main-screen");
+      let gameScreen = document.getElementById("game-screen");
+      let dragArea = document.getElementById("drag-area");
+      let gameFooter = document.getElementById("game-footer");
+
+      let data = getData();
+      let footerText = `Form the phrase "${data}" on the line above`;
+
+      let contentArray = data.split(" ");
+      let cards = generateCard(contentArray);
+      cards.forEach(card => {
+        dragArea.appendChild(card);
+      });
+
+      gameFooter.innerHTML = footerText;
+
+      mainScreen.setAttribute("class", "hidden");
+      gameScreen.setAttribute("class", "show");
+
+      randomCardPosition(cards);
+    }
+
+    function generateCard(contentArray) {
+      let divs = [];
+      let id = 0;
+      contentArray.forEach(content => {
+        let div = document.createElement("div");
+        div.setAttribute("class", "card");
+        div.setAttribute("draggable", "true");
+        div.innerHTML = content;
+        divs.push(div);
+      });
+
+      return divs;
+    }
+
+    function randomCardPosition(cards) {
+      let dragArea = document.getElementById("drag-area");
+      let pos = getPos(dragArea);
+      let top = dragArea.offsetTop;
+      let left = dragArea.offsetLeft;
+      let height = dragArea.offsetHeight;
+      let width = dragArea.offsetWidth;
+
+      let maxTop = top + height - 50;
+      let maxLeft = left + width - 50;
+
+      cards.forEach(card => {
+        let cardLeft = getRandomNumber(left, maxLeft);
+        let cardTop = getRandomNumber(top, maxTop);
+
+        card.style.left = `${cardLeft}px`;
+        card.style.top = `${cardTop}px`;
+      });
+
+
+    }
+    function getPos(el) {
+      // yay readability
+      for (var lx = 0, ly = 0;
+        el != null;
+        lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+      return { x: lx, y: ly };
+    }
+    function startTimer() {
+      let totalSec = 0;
+      let timer = document.getElementById("timer");
+
+      setInterval(() => {
+        totalSec++;
+
+        let second = totalSec % 60;
+        let minute = parseInt(totalSec / 60);
+
+        timerDisplay = minute.toString().padLeft("0", 2) + ":" + second.toString().padLeft("0", 2);
+
+        timer.innerHTML = timerDisplay;
+      }, 1000);
+
+    }
+
+    function getData() {
+      let randomIndex = getRandomNumber(0, dataArray.length);
+      return dataArray[randomIndex];
+    }
+
+    // https://www.w3schools.com/js/js_random.asp
+    function getRandomNumber(min, max) {
+      return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    String.prototype.padLeft = function (char, length) {
+      let result = this;
+      while (result.length < length) {
+        result = char + result;
       }
 
-      function renderGameScreen() {
-        let mainScreen = document.getElementById("main-screen");
-        let gameScreen = document.getElementById("game-screen");
-        let dragArea = document.getElementById("drag-area");
-        let gameFooter = document.getElementById("game-footer");
-
-        let data = getData();
-        let footerText = `Form the phrase "${data}" on the line above`;
-
-        let contentArray = data.split(" ");
-        let cards = generateCard(contentArray);
-        cards.forEach(card => {
-          dragArea.appendChild(card);
-        });
-
-        gameFooter.innerHTML = footerText;
-
-        mainScreen.setAttribute("class", "hidden");
-        gameScreen.setAttribute("class", "show");
-      }
-
-      function generateCard(contentArray) {
-        let divs = [];
-
-        contentArray.forEach(content => {
-          let div = document.createElement("div");
-
-          div.setAttribute("class", "card");
-          div.setAttribute("draggable", "true");
-          div.innerHTML = content;
-
-          divs.push(div);
-        });
-
-        return divs;
-      }
-
-      function startTimer() {
-        let totalSec = 0;
-        let timer = document.getElementById("timer");
-
-        setInterval(() => {
-          totalSec++;
-
-          let second = totalSec % 60;
-          let minute = parseInt(totalSec / 60);
-
-          timerDisplay = minute.toString().padLeft("0", 2) + ":" + second.toString().padLeft("0", 2);
-
-          timer.innerHTML = timerDisplay;
-        }, 1000);
-
-      }
-
-      function getData() {
-        let randomIndex = Math.floor(Math.random() * dataArray.length);
-        return dataArray[randomIndex];
-      }
-
-
-
-      String.prototype.padLeft = function (char, length) {
-        let result = this;
-        while (result.length < length) {
-          result = char + result;
-        }
-
-        return result;
-      }
-    </script>
+      return result;
+    }
+  </script>
 </body>
 
 </html>
