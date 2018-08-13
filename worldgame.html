@@ -103,7 +103,6 @@
     }
 
     #drop-zone {
-      border-bottom: 1px solid #888888;
       margin: 0px auto;
     }
   </style>
@@ -176,6 +175,7 @@
       });
 
       dropZone.style.width = length;
+      dropZone.style.borderBottom = "1px solid #888888";
     }
 
     function generateCard(contentArray) {
@@ -194,14 +194,13 @@
 
     function randomCardPosition(cards) {
       let dragArea = document.getElementById("drag-area");
-      let pos = getPos(dragArea);
-      let top = dragArea.offsetTop;
-      let left = dragArea.offsetLeft;
+      let top = dragArea.offsetTop + 50;
+      let left = dragArea.offsetLeft + 50;
       let height = dragArea.offsetHeight;
       let width = dragArea.offsetWidth;
 
-      let maxTop = top + height - 50;
-      let maxLeft = left + width - 50;
+      let maxTop = top + height - 100;
+      let maxLeft = left + width - 100;
 
       cards.forEach(card => {
         let cardLeft = getRandomNumber(left, maxLeft);
@@ -213,13 +212,7 @@
 
 
     }
-    function getPos(el) {
-      // yay readability
-      for (var lx = 0, ly = 0;
-        el != null;
-        lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
-      return { x: lx, y: ly };
-    }
+
     function startTimer() {
       let totalSec = 0;
       let timer = document.getElementById("timer");
@@ -254,6 +247,18 @@
       }
 
       return result;
+    }
+
+    function onMouseDown(event) {
+
+    }
+
+    function move(element, event) {
+
+    }
+
+    function onDragStart() {
+      return false;
     }
   </script>
 </body>
